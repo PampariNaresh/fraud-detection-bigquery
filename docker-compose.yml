@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  airflow-init:
+    image: apache/airflow:2.8.0
+    depends_on:
+      - postgres
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/keys/sa-key.json
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./keys:/opt/airflow/keys
+    command: db init
+
+  airflow-webserver:
+    image: apache/airflow:2.8.0
+    restart: always
+    depends_on:
+      - airflow-init
+    ports:
+      - "8080:8080"
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/keys/sa-key.json
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./keys:/opt/airflow/keys
+    command: webserver
+
+  airflow-scheduler:
+    image: apache/airflow:2.8.0
+    restart: always
+    depends_on:
+      - airflow-init
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/keys/sa-key.json
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./keys:/opt/airflow/keys
+    command: scheduler
+
+volumes:
+  postgres_data:
