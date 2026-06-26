@@ -5,7 +5,7 @@
 -- ============================================================
 
 -- Run predictions and insert into reports table
-INSERT INTO `fraud-detection-500305.reports.fraud_predictions`
+INSERT INTO `fraud-detection-500305-500517.reports.fraud_predictions`
 SELECT
     CURRENT_TIMESTAMP()                                               AS prediction_date,
     f.step, f.type, f.amount, f.nameOrig, f.nameDest,
@@ -20,17 +20,17 @@ SELECT
     END                                                              AS risk_level,
     f.isFraud
 FROM ML.PREDICT(
-    MODEL `fraud-detection-500305.ml_models.fraud_boosted_tree`,
-    (SELECT * FROM `fraud-detection-500305.features.transaction_features` WHERE step > 600)
+    MODEL `fraud-detection-500305-500517.ml_models.fraud_boosted_tree`,
+    (SELECT * FROM `fraud-detection-500305-500517.features.transaction_features` WHERE step > 600)
 ) AS p
-JOIN `fraud-detection-500305.features.transaction_features` AS f
+JOIN `fraud-detection-500305-500517.features.transaction_features` AS f
     ON p.nameOrig = f.nameOrig
    AND p.step     = f.step
    AND p.amount   = f.amount
 WHERE f.step > 600;
 
 -- Write high-risk alerts
-INSERT INTO `fraud-detection-500305.reports.high_risk_alerts`
+INSERT INTO `fraud-detection-500305-500517.reports.high_risk_alerts`
 (alert_date, step, type, amount, nameOrig, nameDest,
  fraud_probability, risk_level, alert_status, top_reason)
 SELECT
@@ -45,8 +45,8 @@ SELECT
         WHEN f.is_transfer_or_cashout  = 1 THEN 'High-risk transaction type'
         ELSE 'Multiple fraud signals detected'
     END
-FROM `fraud-detection-500305.reports.fraud_predictions` p
-JOIN `fraud-detection-500305.features.transaction_features` f
+FROM `fraud-detection-500305-500517.reports.fraud_predictions` p
+JOIN `fraud-detection-500305-500517.features.transaction_features` f
     ON p.nameOrig = f.nameOrig
    AND p.step     = f.step
    AND p.amount   = f.amount
@@ -54,7 +54,7 @@ WHERE DATE(p.prediction_date) = CURRENT_DATE()
   AND p.risk_level = 'HIGH';
 
 -- Write daily summary
-INSERT INTO `fraud-detection-500305.reports.daily_summary`
+INSERT INTO `fraud-detection-500305-500517.reports.daily_summary`
 (summary_date, total_transactions, flagged_count, high_risk_count,
  medium_risk_count, low_risk_count, total_amount_at_risk,
  avg_fraud_probability, model_used)
@@ -68,7 +68,7 @@ SELECT
     ROUND(SUM(CASE WHEN risk_level IN ('HIGH','MEDIUM') THEN amount ELSE 0 END), 2),
     ROUND(AVG(fraud_probability), 4),
     'fraud_boosted_tree'
-FROM `fraud-detection-500305.reports.fraud_predictions`
+FROM `fraud-detection-500305-500517.reports.fraud_predictions`
 WHERE DATE(prediction_date) = CURRENT_DATE();
 
 -- Verify predictions by risk level
@@ -78,7 +78,7 @@ SELECT
     COUNTIF(isFraud = 1)                                  AS actual_fraud,
     ROUND(COUNTIF(isFraud = 1) / COUNT(*) * 100, 2)      AS hit_rate_pct,
     ROUND(AVG(fraud_probability), 4)                       AS avg_score
-FROM `fraud-detection-500305.reports.fraud_predictions`
+FROM `fraud-detection-500305-500517.reports.fraud_predictions`
 WHERE DATE(prediction_date) = CURRENT_DATE()
 GROUP BY risk_level
 ORDER BY hit_rate_pct DESC;
@@ -87,7 +87,7 @@ ORDER BY hit_rate_pct DESC;
 SELECT
     type, amount, nameOrig, nameDest,
     fraud_probability, risk_level, isFraud
-FROM `fraud-detection-500305.reports.fraud_predictions`
+FROM `fraud-detection-500305-500517.reports.fraud_predictions`
 WHERE DATE(prediction_date) = CURRENT_DATE()
 ORDER BY fraud_probability DESC
 LIMIT 20;

@@ -5,8 +5,8 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 import logging
 
-PROJECT_ID    = "fraud-detection-500305"
-BUCKET_NAME   = "fraud-detection-raw-project"
+PROJECT_ID    = "fraud-detection-500305-500517"
+BUCKET_NAME   = "fraud-detection-raw-500305-500517"
 GCS_FILE_PATH = "transactions/PS_20174392719_1491204439457_log.csv"
 BQ_DATASET    = "raw"
 BQ_TABLE      = "transactions"

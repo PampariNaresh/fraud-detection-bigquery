@@ -35,6 +35,8 @@ services:
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__FERNET_KEY=I_xomEhkr4LM-bkVNeLQwTI4FdAgw9D8wWPhNYcGmHg=
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/keys/sa-key.json
     volumes:
       - ./dags:/opt/airflow/dags
@@ -49,6 +51,8 @@ services:
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__FERNET_KEY=I_xomEhkr4LM-bkVNeLQwTI4FdAgw9D8wWPhNYcGmHg=
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/keys/sa-key.json
     volumes:
       - ./dags:/opt/airflow/dags

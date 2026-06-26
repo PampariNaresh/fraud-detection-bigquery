@@ -5,7 +5,7 @@
 -- ============================================================
 
 -- MODEL 1: Logistic Regression (Baseline)
-CREATE OR REPLACE MODEL `fraud-detection-500305.ml_models.fraud_logistic_regression`
+CREATE OR REPLACE MODEL `fraud-detection-500305-500517.ml_models.fraud_logistic_regression`
 OPTIONS(
     model_type       = 'LOGISTIC_REG',
     input_label_cols = ['isFraud'],
@@ -17,18 +17,18 @@ SELECT
     dest_balance_unchanged, amount_to_balance_ratio, is_large_transaction,
     hour_of_step, type_encoded, is_transfer_or_cashout,
     net_orig_change, net_dest_change, isFraud
-FROM `fraud-detection-500305.features.transaction_features`
+FROM `fraud-detection-500305-500517.features.transaction_features`
 WHERE step <= 600;
 
 -- Evaluate logistic regression
 SELECT precision, recall, f1_score, roc_auc, log_loss
 FROM ML.EVALUATE(
-    MODEL `fraud-detection-500305.ml_models.fraud_logistic_regression`,
-    (SELECT * FROM `fraud-detection-500305.features.transaction_features` WHERE step > 600)
+    MODEL `fraud-detection-500305-500517.ml_models.fraud_logistic_regression`,
+    (SELECT * FROM `fraud-detection-500305-500517.features.transaction_features` WHERE step > 600)
 );
 
 -- MODEL 2: Boosted Tree Classifier (Primary Model)
-CREATE OR REPLACE MODEL `fraud-detection-500305.ml_models.fraud_boosted_tree`
+CREATE OR REPLACE MODEL `fraud-detection-500305-500517.ml_models.fraud_boosted_tree`
 OPTIONS(
     model_type            = 'BOOSTED_TREE_CLASSIFIER',
     input_label_cols      = ['isFraud'],
@@ -45,23 +45,23 @@ SELECT
     dest_balance_unchanged, amount_to_balance_ratio, is_large_transaction,
     hour_of_step, type_encoded, is_transfer_or_cashout,
     net_orig_change, net_dest_change, isFraud
-FROM `fraud-detection-500305.features.transaction_features`
+FROM `fraud-detection-500305-500517.features.transaction_features`
 WHERE step <= 600;
 
 -- Evaluate boosted tree
 SELECT precision, recall, f1_score, roc_auc, log_loss
 FROM ML.EVALUATE(
-    MODEL `fraud-detection-500305.ml_models.fraud_boosted_tree`,
-    (SELECT * FROM `fraud-detection-500305.features.transaction_features` WHERE step > 600)
+    MODEL `fraud-detection-500305-500517.ml_models.fraud_boosted_tree`,
+    (SELECT * FROM `fraud-detection-500305-500517.features.transaction_features` WHERE step > 600)
 );
 
 -- Feature importance for boosted tree
 SELECT feature, attribution
-FROM ML.GLOBAL_EXPLAIN(MODEL `fraud-detection-500305.ml_models.fraud_boosted_tree`)
+FROM ML.GLOBAL_EXPLAIN(MODEL `fraud-detection-500305-500517.ml_models.fraud_boosted_tree`)
 ORDER BY attribution DESC;
 
 -- MODEL 3: KMeans Anomaly Detection (Unsupervised)
-CREATE OR REPLACE MODEL `fraud-detection-500305.ml_models.fraud_kmeans_anomaly`
+CREATE OR REPLACE MODEL `fraud-detection-500305-500517.ml_models.fraud_kmeans_anomaly`
 OPTIONS(
     model_type           = 'KMEANS',
     num_clusters         = 8,
@@ -72,13 +72,13 @@ SELECT
     balance_diff_orig, balance_diff_dest, amount_to_balance_ratio,
     orig_balance_zero_after, dest_balance_unchanged,
     is_large_transaction, is_transfer_or_cashout
-FROM `fraud-detection-500305.features.transaction_features`
+FROM `fraud-detection-500305-500517.features.transaction_features`
 WHERE step <= 600;
 
 -- List all trained models
-SELECT * FROM `fraud-detection-500305.ml_models.INFORMATION_SCHEMA.MODELS`;
+SELECT * FROM `fraud-detection-500305-500517.ml_models.INFORMATION_SCHEMA.MODELS`;
 
 -- Compare model evaluation results
 SELECT model_name, precision, recall, f1_score, roc_auc
-FROM `fraud-detection-500305.ml_models.model_evaluation_log`
+FROM `fraud-detection-500305-500517.ml_models.model_evaluation_log`
 ORDER BY f1_score DESC;

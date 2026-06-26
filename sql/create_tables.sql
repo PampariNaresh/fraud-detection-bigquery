@@ -1,11 +1,11 @@
 -- ============================================================
 -- Transaction Fraud Detection System — Table Creation Script
--- Project: fraud-detection-500305
+-- Project: fraud-detection-500305-500517
 -- Run once in BigQuery Console before triggering any DAGs
 -- ============================================================
 
 -- RAW DATASET
-CREATE TABLE IF NOT EXISTS `fraud-detection-500305.raw.transactions` (
+CREATE TABLE IF NOT EXISTS `fraud-detection-500305-500517.raw.transactions` (
     step            INTEGER,
     type            STRING,
     amount          FLOAT64,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `fraud-detection-500305.raw.transactions` (
     isFlaggedFraud  INTEGER
 );
 
-CREATE TABLE IF NOT EXISTS `fraud-detection-500305.raw.ingestion_log` (
+CREATE TABLE IF NOT EXISTS `fraud-detection-500305-500517.raw.ingestion_log` (
     run_date    TIMESTAMP,
     table_name  STRING,
     status      STRING,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `fraud-detection-500305.raw.ingestion_log` (
 );
 
 -- STAGING DATASET
-CREATE TABLE IF NOT EXISTS `fraud-detection-500305.staging.transactions_clean` (
+CREATE TABLE IF NOT EXISTS `fraud-detection-500305-500517.staging.transactions_clean` (
     step            INT64,
     type            STRING,
     amount          FLOAT64,
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `fraud-detection-500305.staging.transactions_clean` (
     isFlaggedFraud  INT64
 );
 
-CREATE TABLE IF NOT EXISTS `fraud-detection-500305.staging.validation_log` (
+CREATE TABLE IF NOT EXISTS `fraud-detection-500305-500517.staging.validation_log` (
     run_date        TIMESTAMP,
     check_name      STRING,
     records_found   INT64,
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `fraud-detection-500305.staging.validation_log` (
 );
 
 -- FEATURES DATASET
-CREATE TABLE IF NOT EXISTS `fraud-detection-500305.features.transaction_features` (
+CREATE TABLE IF NOT EXISTS `fraud-detection-500305-500517.features.transaction_features` (
     step                    INT64,
     type                    STRING,
     amount                  FLOAT64,
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `fraud-detection-500305.features.transaction_features
     net_dest_change         FLOAT64
 );
 
-CREATE TABLE IF NOT EXISTS `fraud-detection-500305.features.feature_log` (
+CREATE TABLE IF NOT EXISTS `fraud-detection-500305-500517.features.feature_log` (
     run_date            TIMESTAMP,
     total_records       INT64,
     fraud_records       INT64,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `fraud-detection-500305.features.feature_log` (
 );
 
 -- ML MODELS DATASET
-CREATE TABLE IF NOT EXISTS `fraud-detection-500305.ml_models.model_evaluation_log` (
+CREATE TABLE IF NOT EXISTS `fraud-detection-500305-500517.ml_models.model_evaluation_log` (
     run_date    TIMESTAMP,
     model_name  STRING,
     precision   FLOAT64,
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `fraud-detection-500305.ml_models.model_evaluation_lo
     status      STRING
 );
 
-CREATE TABLE IF NOT EXISTS `fraud-detection-500305.ml_models.training_log` (
+CREATE TABLE IF NOT EXISTS `fraud-detection-500305-500517.ml_models.training_log` (
     run_date        TIMESTAMP,
     model_name      STRING,
     training_rows   INT64,
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `fraud-detection-500305.ml_models.training_log` (
 );
 
 -- REPORTS DATASET
-CREATE TABLE IF NOT EXISTS `fraud-detection-500305.reports.fraud_predictions` (
+CREATE TABLE IF NOT EXISTS `fraud-detection-500305-500517.reports.fraud_predictions` (
     prediction_date     TIMESTAMP,
     step                INT64,
     type                STRING,
@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS `fraud-detection-500305.reports.fraud_predictions` (
     isFraud             INT64
 );
 
-CREATE TABLE IF NOT EXISTS `fraud-detection-500305.reports.high_risk_alerts` (
+CREATE TABLE IF NOT EXISTS `fraud-detection-500305-500517.reports.high_risk_alerts` (
     alert_date          TIMESTAMP,
     step                INT64,
     type                STRING,
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `fraud-detection-500305.reports.high_risk_alerts` (
     top_reason          STRING
 );
 
-CREATE TABLE IF NOT EXISTS `fraud-detection-500305.reports.daily_summary` (
+CREATE TABLE IF NOT EXISTS `fraud-detection-500305-500517.reports.daily_summary` (
     summary_date            TIMESTAMP,
     total_transactions      INT64,
     flagged_count           INT64,

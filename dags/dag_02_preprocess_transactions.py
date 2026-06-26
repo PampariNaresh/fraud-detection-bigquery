@@ -5,7 +5,7 @@ from airflow.operators.empty import EmptyOperator
 from datetime import datetime, timedelta
 import logging
 
-PROJECT_ID  = "fraud-detection-500305"
+PROJECT_ID  = "fraud-detection-500305-500517"
 GCP_CONN_ID = "google_cloud_default"
 RAW_TABLE   = f"{PROJECT_ID}.raw.transactions"
 CLEAN_TABLE = f"{PROJECT_ID}.staging.transactions_clean"

@@ -6,7 +6,7 @@
 -- Step 1: Compute P95 threshold for large transactions
 WITH p95 AS (
     SELECT APPROX_QUANTILES(amount, 100)[OFFSET(95)] AS threshold
-    FROM `fraud-detection-500305.staging.transactions_clean`
+    FROM `fraud-detection-500305-500517.staging.transactions_clean`
 ),
 
 -- Step 2: Build feature table
@@ -31,12 +31,12 @@ features AS (
         IF(t.type IN ('TRANSFER', 'CASH_OUT'), 1, 0)              AS is_transfer_or_cashout,
         (t.oldbalanceOrg - t.newbalanceOrig)                       AS net_orig_change,
         (t.newbalanceDest - t.oldbalanceDest)                      AS net_dest_change
-    FROM `fraud-detection-500305.staging.transactions_clean` t
+    FROM `fraud-detection-500305-500517.staging.transactions_clean` t
     CROSS JOIN p95 p
 )
 
 -- Write to feature table
-CREATE OR REPLACE TABLE `fraud-detection-500305.features.transaction_features` AS
+CREATE OR REPLACE TABLE `fraud-detection-500305-500517.features.transaction_features` AS
 SELECT * FROM features;
 
 -- Verify features
@@ -47,4 +47,4 @@ SELECT
     COUNTIF(dest_balance_unchanged = 1)      AS unchanged_dest_count,
     COUNTIF(is_large_transaction = 1)        AS large_txn_count,
     ROUND(AVG(amount_to_balance_ratio), 4)   AS avg_amount_ratio
-FROM `fraud-detection-500305.features.transaction_features`;
+FROM `fraud-detection-500305-500517.features.transaction_features`;

@@ -5,7 +5,7 @@ from airflow.operators.empty import EmptyOperator
 from datetime import datetime, timedelta
 import logging
 
-PROJECT_ID    = "fraud-detection-500305"
+PROJECT_ID    = "fraud-detection-500305-500517"
 GCP_CONN_ID   = "google_cloud_default"
 FEATURE_TABLE = f"{PROJECT_ID}.features.transaction_features"
 EVAL_LOG      = f"{PROJECT_ID}.ml_models.model_evaluation_log"
